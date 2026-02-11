@@ -2,6 +2,9 @@ package com.example.listycity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This is a class that tests the city list
+ */
 public class CityListTest {
 
     private CityList mockCityList() {
@@ -18,8 +21,10 @@ public class CityListTest {
     void testAdd() {
         CityList cityList = mockCityList();
         assertEquals(1, cityList.getCities().size());
+
         City city = new City("Regina", "Saskatchewan");
         cityList.add(city);
+
         assertEquals(2, cityList.getCities().size());
         assertTrue(cityList.getCities().contains(city));
     }
@@ -47,23 +52,55 @@ public class CityListTest {
         assertEquals(0, mockCity().compareTo(cityList.getCities().get(1)));
     }
 
-    @Test
-    void testHasCity(){
-        CityList cityList = mockCityList();
-        City city = new City("Calgary", "Alberta");
-        cityList.add(city);
-        //checks to see if the city is in the list
-        assertTrue(cityList.hasCity(city));
-        //checks to see if a random city is not in the list
-        assertFalse(cityList.hasCity(new City("Toronto", "Ontario")));
-        City city2 = new City("Hinton", "Alberta");
-        cityList.add(city2);
-        //check to see if hinton is in the list and remove it if it is
-        if (cityList.hasCity(city2)){
-            cityList.getCities().remove(city2);
-        } else {
-            throw new IllegalArgumentException();
-        }
 
+    @Test
+    void testHasCity() {
+        CityList cityList = mockCityList();
+
+        assertTrue(cityList.hasCity(new City("Edmonton", "Alberta")));
+        assertFalse(cityList.hasCity(new City("Toronto", "Ontario")));
     }
+
+    @Test
+    void testDelete_removesCity() {
+        CityList cityList = new CityList();
+        cityList.add(new City("Edmonton", "Alberta"));
+        cityList.add(new City("Regina", "Saskatchewan"));
+
+        assertEquals(2, cityList.countCities());
+
+        // delete using a NEW object with same values
+        cityList.delete(new City("Regina", "Saskatchewan"));
+
+        assertEquals(1, cityList.countCities());
+        assertFalse(cityList.hasCity(new City("Regina", "Saskatchewan")));
+        assertTrue(cityList.hasCity(new City("Edmonton", "Alberta")));
+    }
+
+    @Test
+    void testDelete_throwsIfNotPresent() {
+        CityList cityList = mockCityList();
+
+        assertThrows(IllegalArgumentException.class, () ->
+                cityList.delete(new City("Toronto", "Ontario"))
+        );
+
+        // list unchanged
+        assertEquals(1, cityList.countCities());
+        assertTrue(cityList.hasCity(new City("Edmonton", "Alberta")));
+    }
+
+    @Test
+    void testCountCities() {
+        CityList cityList = new CityList();
+        assertEquals(0, cityList.countCities());
+
+        cityList.add(new City("Edmonton", "Alberta"));
+        assertEquals(1, cityList.countCities());
+
+        cityList.add(new City("Calgary", "Alberta"));
+        assertEquals(2, cityList.countCities());
+    }
+
+
 }
